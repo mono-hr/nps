@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Опитування про співбесіду — monobank</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black:   #1a1a1a;
+  --gray:    #f5f5f5;
+  --border:  #e2e2e2;
+  --accent:  #f5a623;
+  --text:    #1a1a1a;
+  --muted:   #888;
+  --r:       14px;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  background: #efefef;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 44px 16px 80px;
+  color: var(--text);
+}
+
+/* — Logo — */
+.header {
+  width: 100%;
+  max-width: 660px;
+  margin-bottom: 30px;
+  text-align: right;
+}
+.mono-logo {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  text-decoration: none;
+}
+.mono-wordmark {
+  font-family: 'Inter', sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--black);
+  letter-spacing: -1px;
+  line-height: 1;
+}
+.mono-tagline {
+  font-family: 'Lato', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+
+/* — Progress — */
+.progress-wrap {
+  width: 100%;
+  max-width: 660px;
+  margin-bottom: 22px;
+}
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+.progress-track {
+  height: 5px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--black);
+  border-radius: 3px;
+  transition: width 0.42s cubic-bezier(.4,0,.2,1);
+  width: 0%;
+}
+
+/* — Card — */
+.card {
+  width: 100%;
+  max-width: 660px;
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+/* — Steps — */
+.step { display: none; padding: 36px 40px 28px; animation: fadeUp .3s ease; }
+.step.active { display: block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+/* — Welcome screen — */
+#step0 {
+  padding: 48px 40px 36px;
+  text-align: center;
+}
+.welcome-emoji {
+  font-size: 56px;
+  margin-bottom: 20px;
+  animation: popIn .5s cubic-bezier(.34,1.56,.64,1);
+}
+.welcome-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--black);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+.welcome-sub {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 28px;
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.step-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 11px; font-weight: 700;
+  color: var(--muted); text-transform: uppercase; letter-spacing: .9px;
+  margin-bottom: 10px;
+}
+.step-badge-num {
+  width: 22px; height: 22px;
+  background: var(--black); color: #fff;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 800;
+}
+.step-q {
+  font-family: 'Inter', sans-serif;
+  font-size: 20px; font-weight: 700; color: var(--black);
+  margin-bottom: 5px; line-height: 1.35;
+}
+.step-hint { font-size: 13px; color: var(--muted); margin-bottom: 22px; line-height: 1.6; }
+
+/* — Fields — */
+textarea {
+  width: 100%;
+  font-family: 'Lato', sans-serif;
+  font-size: 15px; color: var(--text);
+  background: var(--gray);
+  border: 2px solid var(--border);
+  border-radius: var(--r);
+  padding: 13px 16px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+  resize: none;
+}
+textarea:focus {
+  border-color: var(--black);
+  background: #fafafa;
+  box-shadow: 0 0 0 3px rgba(26,26,26,.08);
+}
+textarea.err { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,.09); }
+.errmsg { font-size: 12px; color: #ef4444; font-weight: 700; margin-top: 6px; display: none; }
+.errmsg.on { display: block; }
+
+/* — Char counter — */
+.cc { text-align: right; font-size: 11px; color: var(--muted); margin-top: 5px; }
+.cc.warn { color: #f59e0b; }
+.cc.over { color: #ef4444; }
+
+/* — Radio cards (info sufficiency etc.) — */
+.opt-list { display: flex; flex-direction: column; gap: 9px; }
+.opt-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--gray); border: 2px solid var(--border);
+  border-radius: var(--r); padding: 13px 16px;
+  cursor: pointer; user-select: none;
+  transition: border-color .18s, background .18s, box-shadow .18s;
+}
+.opt-item:hover { border-color: #bbb; }
+.opt-item input { display: none; }
+.opt-item.sel {
+  border-color: var(--black); background: #fafafa;
+  box-shadow: 0 0 0 3px rgba(26,26,26,.07);
+}
+.opt-dot {
+  width: 19px; height: 19px; flex-shrink: 0;
+  border-radius: 50%; border: 2px solid var(--border);
+  background: #fff; margin-top: 2px;
+  transition: all .18s; position: relative;
+}
+.opt-item.sel .opt-dot { border-color: var(--black); background: var(--black); }
+.opt-item.sel .opt-dot::after {
+  content: ''; position: absolute; top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  width: 6px; height: 6px; background: #fff; border-radius: 50%;
+}
+.opt-lbl { font-size: 14px; font-weight: 600; line-height: 1.45; }
+.opt-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* — Recruiter photo picker — */
+.recruiter-grid {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 16px; margin-top: 4px;
+}
+.recruiter-opt {
+  width: 140px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 16px 8px 16px;
+  border: 2px solid var(--border); border-radius: 18px;
+  background: var(--gray);
+  cursor: pointer; user-select: none; text-align: center;
+  transition: border-color .18s, background .18s, box-shadow .18s;
+}
+.recruiter-opt:hover { border-color: #bbb; }
+.recruiter-opt input { display: none; }
+.recruiter-opt.sel {
+  border-color: var(--black); background: #fafafa;
+  box-shadow: 0 0 0 3px rgba(26,26,26,.07);
+}
+.recruiter-photo {
+  width: 84px; height: 84px; border-radius: 50%;
+  object-fit: cover; border: 3px solid #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,.14);
+  transition: box-shadow .18s;
+}
+.recruiter-opt.sel .recruiter-photo { box-shadow: 0 2px 10px rgba(0,0,0,.14), 0 0 0 2px var(--black); }
+.recruiter-name { font-size: 14px; font-weight: 700; color: var(--black); }
+
+/* — NPS scale — */
+.nps-wrap { margin-top: 4px; }
+.nps-select-wrap { position: relative; }
+.nps-select {
+  width: 100%;
+  appearance: none; -webkit-appearance: none; -moz-appearance: none;
+  font-family: 'Inter', sans-serif; font-weight: 700; font-size: 17px; color: var(--text);
+  background: var(--gray);
+  border: 2px solid var(--border);
+  border-radius: var(--r);
+  padding: 16px 44px 16px 18px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color .18s, background .18s, box-shadow .18s;
+}
+.nps-select.placeholder { color: var(--muted); font-weight: 600; }
+.nps-select:focus, .nps-select.filled {
+  border-color: var(--black);
+  background: #fafafa;
+  box-shadow: 0 0 0 3px rgba(26,26,26,.08);
+}
+.nps-select-wrap::after {
+  content: '';
+  position: absolute; right: 18px; top: 50%;
+  width: 10px; height: 10px;
+  border-right: 2.5px solid var(--muted);
+  border-bottom: 2.5px solid var(--muted);
+  transform: translateY(-65%) rotate(45deg);
+  pointer-events: none;
+}
+
+/* — Footer — */
+.footer-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18px 40px 26px;
+  border-top: 1px solid var(--border);
+}
+.btn-back {
+  display: flex; align-items: center; gap: 6px;
+  background: none; border: 2px solid var(--border);
+  border-radius: 40px; padding: 10px 20px;
+  font-family: 'Lato', sans-serif; font-size: 14px; font-weight: 700;
+  color: var(--text); cursor: pointer;
+  transition: border-color .18s;
+}
+.btn-back:hover { border-color: var(--black); }
+.btn-next {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--black); color: #fff;
+  border: none; border-radius: 40px; padding: 12px 28px;
+  font-family: 'Lato', sans-serif; font-size: 14px; font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, transform .18s, box-shadow .2s;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.18);
+}
+.btn-next:hover { background: #333; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
+.btn-next svg, .btn-back svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+/* — Thank you — */
+#thankyou {
+  display: none; width: 100%; max-width: 660px;
+  background: #fff; border-radius: 22px;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.08);
+  padding: 56px 40px 48px; text-align: center;
+}
+.ty-cat { font-size: 64px; margin-bottom: 18px; animation: popIn .5s cubic-bezier(.34,1.56,.64,1); }
+@keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+#thankyou h2 {
+  font-family: 'Inter', sans-serif;
+  font-size: 26px; font-weight: 800; color: var(--black); margin-bottom: 10px;
+}
+#thankyou p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+@media(max-width:520px){
+  .step { padding: 26px 18px 22px; }
+  .footer-nav { padding: 14px 18px 20px; }
+  #thankyou { padding: 40px 18px; }
+  #step0 { padding: 36px 18px 28px; }
+  .recruiter-opt { width: 104px; padding: 12px 6px 14px; }
+  .recruiter-photo { width: 64px; height: 64px; }
+  .recruiter-name { font-size: 13px; }
+  .nps-select { font-size: 16px; padding: 14px 40px 14px 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <a class="mono-logo">
+    <span class="mono-wordmark">monobank</span>
+    <span class="mono-tagline">Universal Bank</span>
+  </a>
+</div>
+
+<!-- Progress -->
+<div class="progress-wrap" id="progressWrap" style="display:none">
+  <div class="progress-meta">
+    <span id="pLabel">Крок 1 з …</span>
+    <span id="pPct">0%</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="pFill"></div>
+  </div>
+</div>
+
+<!-- Card -->
+<div class="card" id="formCard">
+
+  <!-- 0. Привітальний екран -->
+  <div class="step active" id="step0">
+    <div class="welcome-emoji">💬</div>
+    <div class="welcome-title">Поділіться враженням від співбесіди</div>
+    <div class="welcome-sub">Нам важлива ваша думка про те, як пройшла співбесіда. Це коротке опитування займе 2-3 хвилини та допоможе нам стати кращими.</div>
+  </div>
+
+  <!-- Q1: recruiter -->
+  <div class="step" id="stepQ_recruiter" data-qid="recruiter">
+    <div class="step-badge"><div class="step-badge-num">1</div>Співбесіда</div>
+    <div class="step-q">Оберіть рекрутера зум-співбесіди</div>
+    <div class="step-hint">Вкажіть, з ким саме з рекрутерів проходила ваша співбесіда.</div>
+    <div class="recruiter-grid" id="rec_list">
+      <label class="recruiter-opt" onclick="pickRadio(this,'rec')">
+        <input type="radio" name="rec" value="Наталія">
+        <img class="recruiter-photo" src="https://lh3.googleusercontent.com/d/1ozK2XT8cQAZh2pDkJASY_UBt4v-36S6G" alt="Наталія">
+        <div class="recruiter-name">Наталія</div>
+      </label>
+      <label class="recruiter-opt" onclick="pickRadio(this,'rec')">
+        <input type="radio" name="rec" value="Юлія">
+        <img class="recruiter-photo" src="https://lh3.googleusercontent.com/d/1g3SpgyHflVvDK8tmDCrAeEKmd5Z_l1yX" alt="Юлія">
+        <div class="recruiter-name">Юлія</div>
+      </label>
+      <label class="recruiter-opt" onclick="pickRadio(this,'rec')">
+        <input type="radio" name="rec" value="Настя">
+        <img class="recruiter-photo" src="https://lh3.googleusercontent.com/d/13QK9StaOcJHdhBVhnMHKEEE5Jk5Pm1v4" alt="Настя">
+        <div class="recruiter-name">Настя</div>
+      </label>
+      <label class="recruiter-opt" onclick="pickRadio(this,'rec')">
+        <input type="radio" name="rec" value="Катерина">
+        <img class="recruiter-photo" src="https://lh3.googleusercontent.com/d/1XJXWE3YkcFmT6nKtFQ7F-K3jPOHqLRjG" alt="Катерина">
+        <div class="recruiter-name">Катерина</div>
+      </label>
+      <label class="recruiter-opt" onclick="pickRadio(this,'rec')">
+        <input type="radio" name="rec" value="Анастасія">
+        <img class="recruiter-photo" src="https://lh3.googleusercontent.com/d/1_sYsefDybLiZWhyd0K5yI-tRxFgGIcdK" alt="Анастасія">
+        <div class="recruiter-name">Анастасія</div>
+      </label>
+    </div>
+    <div class="errmsg" id="e_rec">Будь ласка, оберіть рекрутера</div>
+  </div>
+
+  <!-- Q2: openness NPS -->
+  <div class="step" id="stepQ_openness" data-qid="openness">
+    <div class="step-badge"><div class="step-badge-num">2</div>Оцінка</div>
+    <div class="step-q">Як би ви оцінили доступність і відкритість рекрутера у спілкуванні?</div>
+    <div class="step-hint">Оберіть оцінку від 0 до 10.</div>
+    <div class="nps-wrap">
+      <div class="nps-select-wrap">
+        <select class="nps-select placeholder" id="openness_list" onchange="pickNps('openness_list','openness',this.value)">
+          <option value="" selected disabled>Оберіть оцінку від 0 до 10</option>
+        </select>
+      </div>
+    </div>
+    <div class="errmsg" id="e_openness">Будь ласка, оберіть оцінку</div>
+  </div>
+
+  <!-- Q3: recommend NPS -->
+  <div class="step" id="stepQ_recommend" data-qid="recommend">
+    <div class="step-badge"><div class="step-badge-num">3</div>Оцінка</div>
+    <div class="step-q">Якщо ваш знайомий/друг/родич цікавитиметься роботою в нашій компанії, чи ви рекомендували б йому пройти співбесіду?</div>
+    <div class="step-hint">Оберіть оцінку від 0 до 10.</div>
+    <div class="nps-wrap">
+      <div class="nps-select-wrap">
+        <select class="nps-select placeholder" id="recommend_list" onchange="pickNps('recommend_list','recommend',this.value)">
+          <option value="" selected disabled>Оберіть оцінку від 0 до 10</option>
+        </select>
+      </div>
+    </div>
+    <div class="errmsg" id="e_recommend">Будь ласка, оберіть оцінку</div>
+  </div>
+
+  <!-- Q4: feedback text -->
+  <div class="step" id="stepQ_feedback" data-qid="feedback">
+    <div class="step-badge"><div class="step-badge-num">4</div>Досвід</div>
+    <div class="step-q">Що б ви сказали знайомому/другу/родичу про ваш досвід проходження співбесіди в monobank?</div>
+    <div class="step-hint">Надайте коротку чи розгорнуту відповідь на ваш розсуд.</div>
+    <textarea id="q_feedback" rows="6" placeholder="Ваша відповідь…" maxlength="2000"></textarea>
+    <div class="cc" id="cc_feedback">0 / 2000</div>
+    <div class="errmsg" id="e_feedback">Будь ласка, напишіть відповідь</div>
+  </div>
+
+  <!-- Q5: info sufficiency -->
+  <div class="step" id="stepQ_info" data-qid="info">
+    <div class="step-badge"><div class="step-badge-num">5</div>Інформація</div>
+    <div class="step-q">Чи достатньо було вам надано інформації про умови роботи й компанію під час співбесіди?</div>
+    <div class="opt-list" id="info_list">
+      <label class="opt-item" onclick="pickRadio(this,'info')">
+        <input type="radio" name="info" value="Так, всього було достатньо">
+        <div class="opt-dot"></div>
+        <div><div class="opt-lbl">Так, всього було достатньо</div></div>
+      </label>
+      <label class="opt-item" onclick="pickRadio(this,'info')">
+        <input type="radio" name="info" value="Ні, інформації не вистачило">
+        <div class="opt-dot"></div>
+        <div><div class="opt-lbl">Ні, інформації не вистачило</div></div>
+      </label>
+      <label class="opt-item" onclick="pickRadio(this,'info')">
+        <input type="radio" name="info" value="Частково, але хотілось дізнатись більше">
+        <div class="opt-dot"></div>
+        <div><div class="opt-lbl">Частково, але хотілось дізнатись більше</div></div>
+      </label>
+    </div>
+    <div class="errmsg" id="e_info">Будь ласка, оберіть один із варіантів</div>
+    <div id="info_detail_wrap" style="display:none; margin-top:14px;">
+      <div class="step-hint" style="margin-bottom:8px;">Поділіться, яка інформація була недостатньо зрозумілою або розкритою?</div>
+      <textarea id="q_info_detail" rows="4" placeholder="Ваша відповідь…" maxlength="1000"></textarea>
+      <div class="errmsg" id="e_info_detail">Будь ласка, напишіть відповідь</div>
+    </div>
+    <div class="sending-msg" id="sendMsg" style="font-size:13px;color:var(--muted);margin-top:10px"></div>
+  </div>
+
+  <!-- Nav -->
+  <div class="footer-nav">
+    <button class="btn-back" id="btnBack" onclick="prev()" tabindex="-1" style="visibility:hidden">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+      Назад
+    </button>
+    <button class="btn-next" id="btnNext" onclick="next()" tabindex="-1">
+      Почати
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Thank you -->
+<div id="thankyou">
+  <div class="ty-cat">🐾</div>
+  <h2>Дякуємо за відповіді!</h2>
+  <p>Ваша думка допомагає нам покращувати процес співбесід.</p>
+</div>
+
+<script>
+// Замінити на URL веб-застосунку Apps Script (Deploy → New deployment → Web app),
+// щоб відповіді автоматично дописувались у Google Таблицю.
+// Якщо URL порожній — форма просто показує екран "Дякуємо" й виводить відповіді в консоль.
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3yaUuMkcdl4emm0fGKL2jlYuzW2VjSCbPZ3GU3UYEZoQq5pp87BdhJ8rTMZuJWgkY/exec';
+
+const QUESTIONS = ['recruiter', 'openness', 'recommend', 'feedback', 'info'];
+
+let stepQueue = [];
+let curIdx = 0;
+
+function buildStepQueue() {
+  stepQueue = [{ type: 'welcome', el: document.getElementById('step0') }];
+  QUESTIONS.forEach(qid => {
+    stepQueue.push({ type: 'question', qid, el: document.getElementById('stepQ_' + qid) });
+  });
+}
+
+function buildNpsRow(containerId, name) {
+  const sel = document.getElementById(containerId);
+  for (let i = 0; i <= 10; i++) {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = i;
+    sel.appendChild(opt);
+  }
+}
+
+let npsValues = { openness: null, recommend: null };
+
+function pickNps(containerId, name, val) {
+  val = Number(val);
+  npsValues[name] = val;
+  const sel = document.getElementById(containerId);
+  sel.value = val;
+  sel.classList.remove('placeholder');
+  sel.classList.add('filled');
+  err('e_' + name, false);
+  saveDraft();
+}
+
+function uiSync() {
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  stepQueue[curIdx].el.classList.add('active');
+
+  const isWelcome = stepQueue[curIdx].type === 'welcome';
+  const totalQ = stepQueue.length - 1;
+  const currentQ = curIdx;
+
+  const progressWrap = document.getElementById('progressWrap');
+  if (isWelcome) {
+    progressWrap.style.display = 'none';
+  } else {
+    progressWrap.style.display = 'block';
+    const pct = Math.round(((currentQ - 1) / totalQ) * 100);
+    document.getElementById('pFill').style.width = pct + '%';
+    document.getElementById('pLabel').textContent = 'Крок ' + currentQ + ' з ' + totalQ;
+    document.getElementById('pPct').textContent = pct + '%';
+  }
+
+  document.getElementById('btnBack').style.visibility = curIdx > 0 ? 'visible' : 'hidden';
+
+  const nb = document.getElementById('btnNext');
+  if (isWelcome) {
+    nb.innerHTML = 'Почати <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>';
+  } else if (curIdx === stepQueue.length - 1) {
+    nb.innerHTML = 'Надіслати <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+  } else {
+    nb.innerHTML = 'Далі <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>';
+  }
+}
+
+function next() {
+  const step = stepQueue[curIdx];
+  if (!validateStep(step)) return;
+  if (curIdx === stepQueue.length - 1) { submit(); return; }
+  curIdx++;
+  saveDraft();
+  uiSync();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function prev() {
+  if (curIdx > 0) { curIdx--; saveDraft(); uiSync(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+    e.preventDefault(); next();
+  }
+});
+
+function err(id, show) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('on', show);
+}
+
+function validateStep(step) {
+  if (step.type === 'welcome') return true;
+  const qid = step.qid;
+
+  if (qid === 'recruiter') {
+    const v = document.querySelector('input[name="rec"]:checked');
+    err('e_rec', !v); return !!v;
+  }
+  if (qid === 'openness') {
+    const bad = npsValues.openness === null;
+    err('e_openness', bad); return !bad;
+  }
+  if (qid === 'recommend') {
+    const bad = npsValues.recommend === null;
+    err('e_recommend', bad); return !bad;
+  }
+  if (qid === 'feedback') {
+    const el = document.getElementById('q_feedback');
+    const bad = el.value.trim().length === 0;
+    el.classList.toggle('err', bad);
+    err('e_feedback', bad);
+    return !bad;
+  }
+  if (qid === 'info') {
+    const v = document.querySelector('input[name="info"]:checked');
+    err('e_info', !v);
+    if (!v) return false;
+    if (v.value !== 'Так, всього було достатньо') {
+      const el = document.getElementById('q_info_detail');
+      const bad = el.value.trim().length === 0;
+      el.classList.toggle('err', bad);
+      err('e_info_detail', bad);
+      return !bad;
+    }
+    return true;
+  }
+  return true;
+}
+
+function pickRadio(lbl, name) {
+  document.querySelectorAll('input[name="' + name + '"]').forEach(r => {
+    r.closest('label').classList.remove('sel');
+  });
+  lbl.classList.add('sel');
+  lbl.querySelector('input').checked = true;
+  err('e_' + (name === 'rec' ? 'rec' : name), false);
+  if (name === 'info') syncInfoDetail();
+  saveDraft();
+}
+
+function syncInfoDetail() {
+  const v = document.querySelector('input[name="info"]:checked');
+  const wrap = document.getElementById('info_detail_wrap');
+  const show = !!v && v.value !== 'Так, всього було достатньо';
+  wrap.style.display = show ? 'block' : 'none';
+  if (!show) {
+    document.getElementById('q_info_detail').classList.remove('err');
+    err('e_info_detail', false);
+  }
+}
+
+// — Char counter —
+(() => {
+  const el = document.getElementById('q_feedback');
+  const cc = document.getElementById('cc_feedback');
+  if (!el || !cc) return;
+  const max = parseInt(el.getAttribute('maxlength')) || 2000;
+  el.addEventListener('input', function () {
+    const l = this.value.length;
+    cc.textContent = l + ' / ' + max;
+    cc.className = 'cc' + (l >= max ? ' over' : l > max * .88 ? ' warn' : '');
+    if (l > 0) { this.classList.remove('err'); err('e_feedback', false); }
+  });
+})();
+
+(() => {
+  const el = document.getElementById('q_info_detail');
+  if (!el) return;
+  el.addEventListener('input', function () {
+    if (this.value.trim().length > 0) { this.classList.remove('err'); err('e_info_detail', false); }
+  });
+})();
+
+// — Collect —
+function collect() {
+  const recV  = document.querySelector('input[name="rec"]:checked');
+  const infoV = document.querySelector('input[name="info"]:checked');
+  const now = new Date();
+
+  const monthNames = ['Січень','Лютий','Березень','Квітень','Травень','Червень','Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'];
+  const pad = n => String(n).padStart(2, '0');
+  const monthYear = monthNames[now.getMonth()] + ' ' + now.getFullYear();
+  const timestamp = pad(now.getDate()) + '.' + pad(now.getMonth() + 1) + '.' + now.getFullYear() + ' ' +
+                     pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+
+  const result = {
+    monthYear,
+    timestamp,
+    recruiter: recV ? recV.value : '—',
+    opennessScore: npsValues.openness,
+    recommendScore: npsValues.recommend,
+    feedback: document.getElementById('q_feedback').value.trim(),
+    infoSufficiency: infoV ? infoV.value : '—',
+    infoDetail: document.getElementById('q_info_detail').value.trim(),
+  };
+
+  const ua = navigator.userAgent;
+  const isMobile  = /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+  const isTablet  = /iPad|Tablet/i.test(ua) || (isMobile && Math.min(screen.width, screen.height) > 600);
+  const deviceType = isTablet ? 'Планшет' : isMobile ? 'Мобільний' : 'Комп\'ютер';
+  result._device = deviceType + ' | ' + screen.width + 'x' + screen.height + ' | ' + navigator.language;
+
+  return result;
+}
+
+// — LocalStorage draft —
+const LS_KEY = 'mono_nps_draft';
+
+function saveDraft() {
+  const draft = { curIdx, feedback: document.getElementById('q_feedback').value, nps: npsValues };
+  const recV = document.querySelector('input[name="rec"]:checked');
+  const infoV = document.querySelector('input[name="info"]:checked');
+  if (recV) draft.rec = recV.value;
+  if (infoV) draft.info = infoV.value;
+  draft.infoDetail = document.getElementById('q_info_detail').value;
+  try { localStorage.setItem(LS_KEY, JSON.stringify(draft)); } catch (_) {}
+}
+
+function restoreDraft() {
+  let draft;
+  try { draft = JSON.parse(localStorage.getItem(LS_KEY)); } catch (_) {}
+  if (!draft) return;
+
+  if (draft.feedback) {
+    const el = document.getElementById('q_feedback');
+    el.value = draft.feedback;
+    document.getElementById('cc_feedback').textContent = el.value.length + ' / 2000';
+  }
+  if (draft.rec) {
+    const inp = document.querySelector('input[name="rec"][value="' + CSS.escape(draft.rec) + '"]');
+    if (inp) { inp.checked = true; inp.closest('label').classList.add('sel'); }
+  }
+  if (draft.info) {
+    const inp = document.querySelector('input[name="info"][value="' + CSS.escape(draft.info) + '"]');
+    if (inp) { inp.checked = true; inp.closest('label').classList.add('sel'); }
+  }
+  if (draft.infoDetail) document.getElementById('q_info_detail').value = draft.infoDetail;
+  syncInfoDetail();
+  if (draft.nps) {
+    ['openness', 'recommend'].forEach(name => {
+      if (draft.nps[name] != null) pickNps(name + '_list', name, draft.nps[name]);
+    });
+  }
+  if (draft.curIdx > 0 && draft.curIdx < stepQueue.length) curIdx = draft.curIdx;
+}
+
+function clearDraft() {
+  try { localStorage.removeItem(LS_KEY); } catch (_) {}
+}
+
+// — Submit —
+async function submit() {
+  const data = collect();
+  const btn = document.getElementById('btnNext');
+  btn.disabled = true;
+  const msg = document.getElementById('sendMsg');
+  if (msg) msg.textContent = 'Надсилаємо…';
+
+  console.log('Результати опитування:', data);
+  clearDraft();
+  showThankYou();
+
+  if (APPS_SCRIPT_URL) {
+    try {
+      const body = new URLSearchParams();
+      body.append('payload', JSON.stringify(data));
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body,
+      });
+    } catch (err) {
+      console.error('Не вдалось надіслати відповідь у Google Таблицю:', err);
+    }
+  }
+}
+
+function showThankYou() {
+  document.getElementById('formCard').style.display = 'none';
+  document.getElementById('progressWrap').style.display = 'none';
+  document.querySelector('.header').style.display = 'none';
+  document.getElementById('thankyou').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// — Init —
+(function init() {
+  buildStepQueue();
+  buildNpsRow('openness_list', 'openness');
+  buildNpsRow('recommend_list', 'recommend');
+  restoreDraft();
+  uiSync();
+
+  document.getElementById('q_feedback').addEventListener('input', saveDraft);
+  document.getElementById('q_info_detail').addEventListener('input', saveDraft);
+})();
+</script>
+</body>
+</html>
