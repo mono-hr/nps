@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="uk">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0030)https://mono-hr.github.io/nps/ -->
+<html lang="uk" data-lt-installed="true"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Опитування про співбесіду — monobank</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="./енпс_files/css2" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -330,13 +330,13 @@ textarea.err { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,.09);
 </div>
 
 <!-- Progress -->
-<div class="progress-wrap" id="progressWrap" style="display:none">
+<div class="progress-wrap" id="progressWrap" style="display: block;">
   <div class="progress-meta">
-    <span id="pLabel">Крок 1 з …</span>
+    <span id="pLabel">Крок 1 з 5</span>
     <span id="pPct">0%</span>
   </div>
   <div class="progress-track">
-    <div class="progress-fill" id="pFill"></div>
+    <div class="progress-fill" id="pFill" style="width: 0%;"></div>
   </div>
 </div>
 
@@ -344,42 +344,47 @@ textarea.err { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,.09);
 <div class="card" id="formCard">
 
   <!-- 0. Привітальний екран -->
-  <div class="step active" id="step0">
+  <div class="step" id="step0">
     <div class="welcome-emoji">💬</div>
     <div class="welcome-title">Поділіться враженням від співбесіди</div>
     <div class="welcome-sub">Нам важлива ваша думка про те, як пройшла співбесіда. Це коротке опитування займе 2-3 хвилини та допоможе нам стати кращими.</div>
   </div>
 
   <!-- Q1: recruiter -->
-  <div class="step" id="stepQ_recruiter" data-qid="recruiter">
+  <div class="step active" id="stepQ_recruiter" data-qid="recruiter">
     <div class="step-badge"><div class="step-badge-num">1</div>Співбесіда</div>
     <div class="step-q">Оберіть рекрутера зум-співбесіди</div>
     <div class="step-hint">Вкажіть, з ким саме з рекрутерів проходила ваша співбесіда.</div>
     <div class="recruiter-grid" id="rec_list">
-      <label class="recruiter-opt" onclick="pickRadio(this,'rec')">
+      <label class="recruiter-opt" onclick="pickRadio(this,&#39;rec&#39;)">
         <input type="radio" name="rec" value="Наталія">
-        <img class="recruiter-photo" src="Наталія.jpg" alt="Наталія">
+        <img class="recruiter-photo" src="./енпс_files/Наталія.jpg" alt="Наталія">
         <div class="recruiter-name">Наталія</div>
       </label>
-      <label class="recruiter-opt" onclick="pickRadio(this,'rec')">
+      <label class="recruiter-opt" onclick="pickRadio(this,&#39;rec&#39;)">
         <input type="radio" name="rec" value="Юлія">
-        <img class="recruiter-photo" src="Юлія.jpg" alt="Юлія">
+        <img class="recruiter-photo" src="./енпс_files/Юлія.jpg" alt="Юлія">
         <div class="recruiter-name">Юлія</div>
       </label>
-      <label class="recruiter-opt" onclick="pickRadio(this,'rec')">
+      <label class="recruiter-opt" onclick="pickRadio(this,&#39;rec&#39;)">
         <input type="radio" name="rec" value="Настя">
-        <img class="recruiter-photo" src="Настя.jpg" alt="Настя">
+        <img class="recruiter-photo" src="./енпс_files/Настя.jpg" alt="Настя">
         <div class="recruiter-name">Настя</div>
       </label>
-      <label class="recruiter-opt" onclick="pickRadio(this,'rec')">
+      <label class="recruiter-opt" onclick="pickRadio(this,&#39;rec&#39;)">
         <input type="radio" name="rec" value="Катерина">
-        <img class="recruiter-photo" src="Катерина.jpg" alt="Катерина">
+        <img class="recruiter-photo" src="./енпс_files/Катерина.jpg" alt="Катерина">
         <div class="recruiter-name">Катерина</div>
       </label>
-      <label class="recruiter-opt" onclick="pickRadio(this,'rec')">
+      <label class="recruiter-opt" onclick="pickRadio(this,&#39;rec&#39;)">
         <input type="radio" name="rec" value="Анастасія">
-        <img class="recruiter-photo" src="Анастасія.jpg" alt="Анастасія">
+        <img class="recruiter-photo" src="./енпс_files/Анастасія.jpg" alt="Анастасія">
         <div class="recruiter-name">Анастасія</div>
+      </label>
+      <label class="recruiter-opt" onclick="pickRadio(this,&#39;rec&#39;)">
+        <input type="radio" name="rec" value="Валерія">
+        <img class="recruiter-photo" src="./енпс_files/Валерія.jpg" alt="Валерія">
+        <div class="recruiter-name">Валерія</div>
       </label>
     </div>
     <div class="errmsg" id="e_rec">Будь ласка, оберіть рекрутера</div>
@@ -392,9 +397,9 @@ textarea.err { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,.09);
     <div class="step-hint">Оберіть оцінку від 0 до 10.</div>
     <div class="nps-wrap">
       <div class="nps-select-wrap">
-        <select class="nps-select placeholder" id="openness_list" onchange="pickNps('openness_list','openness',this.value)">
-          <option value="" selected disabled>Оберіть оцінку від 0 до 10</option>
-        </select>
+        <select class="nps-select placeholder" id="openness_list" onchange="pickNps(&#39;openness_list&#39;,&#39;openness&#39;,this.value)">
+          <option value="" selected="" disabled="">Оберіть оцінку від 0 до 10</option>
+        <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
       </div>
     </div>
     <div class="errmsg" id="e_openness">Будь ласка, оберіть оцінку</div>
@@ -407,9 +412,9 @@ textarea.err { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,.09);
     <div class="step-hint">Оберіть оцінку від 0 до 10.</div>
     <div class="nps-wrap">
       <div class="nps-select-wrap">
-        <select class="nps-select placeholder" id="recommend_list" onchange="pickNps('recommend_list','recommend',this.value)">
-          <option value="" selected disabled>Оберіть оцінку від 0 до 10</option>
-        </select>
+        <select class="nps-select placeholder" id="recommend_list" onchange="pickNps(&#39;recommend_list&#39;,&#39;recommend&#39;,this.value)">
+          <option value="" selected="" disabled="">Оберіть оцінку від 0 до 10</option>
+        <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
       </div>
     </div>
     <div class="errmsg" id="e_recommend">Будь ласка, оберіть оцінку</div>
@@ -430,17 +435,17 @@ textarea.err { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,.09);
     <div class="step-badge"><div class="step-badge-num">5</div>Інформація</div>
     <div class="step-q">Чи достатньо було вам надано інформації про умови роботи й компанію під час співбесіди?</div>
     <div class="opt-list" id="info_list">
-      <label class="opt-item" onclick="pickRadio(this,'info')">
+      <label class="opt-item" onclick="pickRadio(this,&#39;info&#39;)">
         <input type="radio" name="info" value="Так, всього було достатньо">
         <div class="opt-dot"></div>
         <div><div class="opt-lbl">Так, всього було достатньо</div></div>
       </label>
-      <label class="opt-item" onclick="pickRadio(this,'info')">
+      <label class="opt-item" onclick="pickRadio(this,&#39;info&#39;)">
         <input type="radio" name="info" value="Ні, інформації не вистачило">
         <div class="opt-dot"></div>
         <div><div class="opt-lbl">Ні, інформації не вистачило</div></div>
       </label>
-      <label class="opt-item" onclick="pickRadio(this,'info')">
+      <label class="opt-item" onclick="pickRadio(this,&#39;info&#39;)">
         <input type="radio" name="info" value="Частково, але хотілось дізнатись більше">
         <div class="opt-dot"></div>
         <div><div class="opt-lbl">Частково, але хотілось дізнатись більше</div></div>
@@ -457,14 +462,11 @@ textarea.err { border-color: #ef4444; box-shadow: 0 0 0 3px rgba(239,68,68,.09);
 
   <!-- Nav -->
   <div class="footer-nav">
-    <button class="btn-back" id="btnBack" onclick="prev()" tabindex="-1" style="visibility:hidden">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    <button class="btn-back" id="btnBack" onclick="prev()" tabindex="-1" style="visibility: visible;">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
       Назад
     </button>
-    <button class="btn-next" id="btnNext" onclick="next()" tabindex="-1">
-      Почати
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
-    </button>
+    <button class="btn-next" id="btnNext" onclick="next()" tabindex="-1">Далі <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
   </div>
 </div>
 
@@ -778,5 +780,6 @@ function showThankYou() {
   document.getElementById('q_info_detail').addEventListener('input', saveDraft);
 })();
 </script>
-</body>
-</html>
+
+
+</body></html>
